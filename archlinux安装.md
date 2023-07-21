@@ -25,7 +25,7 @@ timedatectl set-ntp true
 即可同步。  
 可以使用 timedatectl status 检查服务状态。
 ## 建立与格式化硬盘分区（使用 Btrfs 文件系统）
-执行 lsblk 查看硬盘详情。
+执行 lsblk 查看硬盘详情。  
 ![1](./img/lsblk.png)
 图中所示是我的硬盘，最左边 nvme0n1 是硬盘设备名，下面的 nvme0n1p1、nvme0n1p2...是分区设备名。
 ### 注意：硬盘命名规则
