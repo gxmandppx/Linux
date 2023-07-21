@@ -25,7 +25,7 @@ timedatectl set-ntp true
 即可同步。  
 可以使用 timedatectl status 检查服务状态。
 ## 建立与格式化硬盘分区（使用 Btrfs 文件系统）
-执行 lsblk 查看硬盘详情。  
+执行 lsblk 查看硬盘详情。
 ![1](./img/lsblk.png)
 图中所示是我的硬盘，最左边 nvme0n1 是硬盘设备名，下面的 nvme0n1p1、nvme0n1p2...是分区设备名。
 ### 注意：硬盘命名规则
@@ -61,7 +61,7 @@ Enter new partition name，输入分区名，回车。
 ### 2.格式化硬盘分区
 
 分区完成后，可执行 ```lsblk``` 查看分区状态。
-![3](./img/lsblk.png)
+![3](./img/lsblk.png)  
 找到 EFI 分区（一般在最前面，大小 100M ~ 300M）
 执行下面命令格式化 EFI 分区：
 
@@ -223,8 +223,8 @@ EDITOR=nano visudo
 ```
 按键盘上的 i 进入插入模式。
 往下翻找到 "Uncomment to allow members of group to execute any command"
-将下面一行 %wheel 前的注释符（#）删去。
-![3](./img/visudo.png)
+将下面一行 %wheel 前的注释符（#）删去。  
+![3](./img/visudo.png)  
 按 Esc 键，输入 :wq，回车，保存退出。
 ## 安装 GRUB 引导程序
 执行 ```lsblk``` 确保 ```/boot/efi``` 分区已正确挂载。
@@ -238,7 +238,7 @@ pacman -S grub efibootmgr os-prober
 ```bash
 nano /etc/default/grub
 ```
-![4](./img/os-prober.avif)
+![4](./img/os-prober.avif)  
 将 GRUB 安装到 EFI 分区：
 ```bash
 grub-install --efi-directory=/boot/efi --bootloader-id=GRUB
