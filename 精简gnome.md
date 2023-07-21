@@ -1,0 +1,21 @@
+联系人：**gnome-contacts**  
+音乐：**gnome-music**  
+软件商店：**gnome-software**  
+帮助：**gnome-user-docs和yelp**  
+地图：**gnome-maps**  
+导航：**gnome-tour**  
+茄子：**cheese**  
+浏览器：**epiphany**  
+日历：**gnome-calendar**  
+日志：**gnome-logs**  
+时钟：**gnome-clocks**  
+视频：**totem**  
+天气：**gnome-weather**  
+文档查看器：**sushi和evince**  
+照片：**gnome-photos**  
+文档扫描仪：**simple-scan**  
+计算器：**gnome-calculator**  
+一键卸载：
+```bash
+sudo pacman -Rn gnome-contact gnome-music gnome-software gnome-user-docs yelp gnome-maps gnome-tour cheese epiphany gnome-calendar gnome-logs gnome-clocks totem gnome-weather sushi evince gnome-photos simple-scan gnome-calculator
+```
