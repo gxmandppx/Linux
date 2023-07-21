@@ -226,7 +226,7 @@ EDITOR=nano visudo
 ![3](./img/visudo.png)  
 按 Esc 键，输入 :wq，回车，保存退出。
 ## 安装 GRUB 引导程序
-执行 ```lsblk``` 确保 ```/boot/efi``` 分区已正确挂载。
+执行 ```lsblk``` 确保 ```/efi``` 分区已正确挂载。
 然后执行下面命令安装 grub 和 efibootmgr：
 
 ```bash
@@ -240,7 +240,7 @@ nano /etc/default/grub
 ![4](./img/os-prober.avif)  
 将 GRUB 安装到 EFI 分区：
 ```bash
-grub-install --efi-directory=/boot/efi --bootloader-id=GRUB
+grub-install --efi-directory=/efi --bootloader-id=GRUB
 ```
 使用以下命令生成 GRUB 配置文件：
 ```bash
