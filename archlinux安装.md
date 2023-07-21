@@ -59,8 +59,7 @@ Size in sectors or {KMGTP}，输入根分区的大小（建议大于 64G），�
 Hex code or GUID，默认8300是 Linux File System，保持默认即可，回车。
 Enter new partition name，输入分区名，回车。
 ### 2.格式化硬盘分区
-
-分区完成后，可执行 ```lsblk``` 查看分区状态。
+分区完成后，可执行 ```lsblk``` 查看分区状态。  
 ![3](./img/lsblk.png)  
 找到 EFI 分区（一般在最前面，大小 100M ~ 300M）
 执行下面命令格式化 EFI 分区：
