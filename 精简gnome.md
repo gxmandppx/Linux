@@ -17,5 +17,5 @@
 计算器：**gnome-calculator**  
 一键卸载：
 ```bash
-sudo pacman -Rn gnome-contact gnome-music gnome-software gnome-user-docs yelp gnome-maps gnome-tour cheese epiphany gnome-calendar gnome-logs gnome-clocks totem gnome-weather sushi evince gnome-photos simple-scan gnome-calculator
+sudo pacman -Rn gnome-contacts gnome-music gnome-software gnome-user-docs yelp gnome-maps gnome-tour cheese epiphany gnome-calendar gnome-logs gnome-clocks totem gnome-weather sushi evince gnome-photos simple-scan gnome-calculator
 ```
