@@ -192,7 +192,7 @@ vim /etc/locale.gen
 
 按键盘上的 i 进入插入模式。
 往下翻找到 ```en_US.UTF-8 UTF-8```和```zh_CN.UTF-8 UTF-8```，将前面的注释符（#）删去。
-保存退出。
+然后按 Esc 键，输入 :wq，回车，保存退出。
 **注意：在安装阶段不要设置中文 locale，可能导致 tty 乱码。但是在安装gnome之前必须修改，不然进入桌面环境之后很难修改中文环境**
 然后执行
 
@@ -208,6 +208,7 @@ passwd
 （输入密码时不会有任何显示）
 ## 普通用户的创建与设置
 执行下面命令创建一个普通用户：
+
 ```bash
 useradd -m -g users -G wheel,storage,power 用户名
 ```
@@ -219,12 +220,13 @@ passwd 用户名
 ```bash
 EDITOR=nano visudo
 ```
+按键盘上的 i 进入插入模式。
 往下翻找到 "Uncomment to allow members of group to execute any command"
 将下面一行 %wheel 前的注释符（#）删去。  
 ![3](./img/visudo.png)  
-保存退出。
+按 Esc 键，输入 :wq，回车，保存退出。
 ## 安装 GRUB 引导程序
-执行 ```lsblk``` 确保 ```/efi``` 分区已正确挂载。
+执行 ```lsblk``` 确保 ```/boot/efi``` 分区已正确挂载。
 然后执行下面命令安装 grub 和 efibootmgr：
 
 ```bash
@@ -238,25 +240,11 @@ nano /etc/default/grub
 ![4](./img/os-prober.avif)  
 将 GRUB 安装到 EFI 分区：
 ```bash
-grub-install --efi-directory=/efi --bootloader-id=GRUB
+grub-install --efi-directory=/boot/efi --bootloader-id=GRUB
 ```
-使用以下命令生成 GRUB 配置文件**重启之后再运行一遍就能检测到双系统**：
+使用以下命令生成 GRUB 配置文件：
 ```bash
 grub-mkconfig -o /boot/grub/grub.cfg
-```
-## 配置软件仓库
-修改```/etc/pacman.conf```： 
-```bash
-sudo nano /etc/pacman.conf
-```
-添加archlinuxcn(中科大)
-```bash
-[archlinuxcn]
-Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
-```
-导入密钥:
-```bash
-pacman -Syu archlinuxcn-keyring
 ```
 ## SSD TRIM
 执行下面命令开启 SSD 的 TRIM 功能：
@@ -296,14 +284,29 @@ pacman -S mesa vulkan-intel
 Broadwell 及更新架构：
 ```bash
 pacman -S intel-media-driver
+pacman -S intel-media-sdk
 ```
 Haswell 及更早架构：
 ```bash
 pacman -S libva-intel-driver
 ```
+## 配置软件仓库
+修改```/etc/pacman.conf```： 
+```bash
+sudo nano /etc/pacman.conf
+```
+添加archlinuxcn(中科大)
+```bash
+[archlinuxcn]
+Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
+```
+导入密钥:
+```bash
+pacman -Syu archlinuxcn-keyring
+```
 ## 安装gnome桌面
 ```bash
-pacman -S gnome gnome-tweaks gdm
+pacman -S gnome gnome-tweaks gnome-extra gdm
 ```
 开机自启```gdm``界面:
 ```bash
