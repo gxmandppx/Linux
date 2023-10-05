@@ -168,7 +168,20 @@ rw,relatime,nodiscard,compress=zstd:3,ssd,space_cache=v2,subvol=/@
 ```bash
 arch-chroot /mnt
 ```
-
+## 配置软件仓库
+修改```/etc/pacman.conf```： 
+```bash
+sudo nano /etc/pacman.conf
+```
+添加archlinuxcn(中科大)
+```bash
+[archlinuxcn]
+Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
+```
+导入密钥:
+```bash
+pacman -Syu archlinuxcn-keyring
+```
 ## 设置时区
 
 执行下面命令设置 Asia/Shanghai 时区：
@@ -289,20 +302,6 @@ pacman -S intel-media-sdk
 Haswell 及更早架构：
 ```bash
 pacman -S libva-intel-driver
-```
-## 配置软件仓库
-修改```/etc/pacman.conf```： 
-```bash
-sudo nano /etc/pacman.conf
-```
-添加archlinuxcn(中科大)
-```bash
-[archlinuxcn]
-Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
-```
-导入密钥:
-```bash
-pacman -Syu archlinuxcn-keyring
 ```
 ## 安装gnome桌面
 ```bash
