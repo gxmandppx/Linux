@@ -305,7 +305,7 @@ pacman -S libva-intel-driver
 ```
 ## 安装gnome桌面
 ```bash
-pacman -S gnome gnome-tweaks gnome-extra gdm
+pacman -S gnome gnome-tweaks gdm
 ```
 开机自启```gdm``界面:
 ```bash
