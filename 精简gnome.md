@@ -13,7 +13,8 @@
 文档扫描仪：**simple-scan**  
 计算器：**gnome-calculator**
 日志：**gnome-logs**
+相机：**snapshot**
 一键卸载：
 ```bash
-sudo pacman -Rn gnome-contacts gnome-music gnome-software gnome-user-docs yelp gnome-maps gnome-tour epiphany gnome-calendar gnome-clocks totem gnome-weather sushi evince simple-scan gnome-calculator gnome-logs
+sudo pacman -Rn gnome-contacts gnome-music gnome-software gnome-user-docs yelp gnome-maps gnome-tour epiphany gnome-calendar gnome-clocks totem gnome-weather sushi evince simple-scan gnome-calculator gnome-logs snapshot
 ```
