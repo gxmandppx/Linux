@@ -11,8 +11,8 @@
 天气：**gnome-weather**  
 文档查看器：**sushi和evince**   
 文档扫描仪：**simple-scan**  
-计算器：**gnome-calculator**
-日志：**gnome-logs**
+计算器：**gnome-calculator**  
+日志：**gnome-logs**  
 相机：**snapshot**  
 一键卸载：
 ```bash
