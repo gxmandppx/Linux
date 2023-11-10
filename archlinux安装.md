@@ -116,8 +116,8 @@ df -h
 其中 df -h 应该会显示如下内容：
 ```bash
 Filesystem Mounted on
-/dev/sda2  /
-/dev/sda1  /efi
+/dev/sda2  /mnt
+/dev/sda1  /mnt/efi
 ```
 ## 修改镜像源
 执行：
