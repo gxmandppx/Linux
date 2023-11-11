@@ -279,7 +279,7 @@ systemctl enable dhcpcd@eno2
 ```
 执行下面命令安装蓝牙、声卡驱动和其他工具：
 ```bash
-pacman -S bluez bluez-utils pipewire-pulse pipewire-jack pipewire-alsa ntfs-3g paru
+pacman -S bluez bluez-utils pipewire-pulse pipewire-jack pipewire-alsa ntfs-3g
 ```
 - 此处使用了新一代声音服务器 PipeWire，延迟比 PulseAudio 更低。有关 PipeWire 的其他信息，请参阅 https://wiki.archlinux.org/title/PipeWire 。
 如果电脑有蓝牙功能，执行下面命令启用蓝牙：
