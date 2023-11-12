@@ -116,8 +116,8 @@ df -h
 其中 df -h 应该会显示如下内容：
 ```bash
 Filesystem Mounted on
-/dev/sda2  /mnt
-/dev/sda1  /mnt/efi
+/dev/sda2  /
+/dev/sda1  /efi
 ```
 ## 修改镜像源
 执行：
@@ -138,6 +138,7 @@ pacstrap /mnt base base-devel linux linux-firmware linux-headers nano intel-ucod
 - base-devel：基础开发工具包（包括 gcc g++ make 等等）
 - nano：常用的文本编辑器
 - amd-ucode/intel-ucode：CPU 微码
+- 稳定版linux linux-firmware linux-headers也可以安装长期支持版linux-lts linux-firmware linux-lts-headers
 ## 生成 fstab 文件
 用以下命令生成 fstab 文件：
 
@@ -200,12 +201,12 @@ hwclock --systohc
 执行下面命令打开 locale.gen 文件：
 
 ```bash
-vim /etc/locale.gen
+nano /etc/locale.gen
 ```
 
 按键盘上的 i 进入插入模式。
 往下翻找到 ```en_US.UTF-8 UTF-8```和```zh_CN.UTF-8 UTF-8```，将前面的注释符（#）删去。
-然后按 Esc 键，输入 :wq，回车，保存退出。
+然后按CTRL+X，保存退出。
 **注意：在安装阶段不要设置中文 locale，可能导致 tty 乱码。但是在安装gnome之前必须修改，不然进入桌面环境之后很难修改中文环境**
 然后执行
 
@@ -233,13 +234,12 @@ passwd 用户名
 ```bash
 EDITOR=nano visudo
 ```
-按键盘上的 i 进入插入模式。
 往下翻找到 "Uncomment to allow members of group to execute any command"
 将下面一行 %wheel 前的注释符（#）删去。  
 ![3](./img/visudo.png)  
-按 Esc 键，输入 :wq，回车，保存退出。
+按 CTRL+X，保存退出。
 ## 安装 GRUB 引导程序
-执行 ```lsblk``` 确保 ```/efi``` 分区已正确挂载。
+执行 ```lsblk``` 确保 ```/boot/efi``` 分区已正确挂载。
 然后执行下面命令安装 grub 和 efibootmgr：
 
 ```bash
@@ -253,7 +253,7 @@ nano /etc/default/grub
 ![4](./img/os-prober.avif)  
 将 GRUB 安装到 EFI 分区：
 ```bash
-grub-install --efi-directory=/efi --bootloader-id=GRUB
+grub-install --efi-directory=/boot/efi --bootloader-id=Arch
 ```
 使用以下命令生成 GRUB 配置文件：
 ```bash
@@ -279,7 +279,7 @@ systemctl enable dhcpcd@eno2
 ```
 执行下面命令安装蓝牙、声卡驱动和其他工具：
 ```bash
-pacman -S bluez bluez-utils pipewire-pulse pipewire-jack pipewire-alsa ntfs-3g
+pacman -S bluez bluez-utils pipewire-pulse pipewire-jack pipewire-alsa ntfs-3g paru
 ```
 - 此处使用了新一代声音服务器 PipeWire，延迟比 PulseAudio 更低。有关 PipeWire 的其他信息，请参阅 https://wiki.archlinux.org/title/PipeWire 。
 如果电脑有蓝牙功能，执行下面命令启用蓝牙：
