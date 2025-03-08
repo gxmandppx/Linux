@@ -9,7 +9,7 @@ station wlan0 scan #扫描无线网络
 station wlan0 get-networks #列出所有可用的无线网络
 station wlan0 connect SSID #SSID 即为 Wi-Fi 名称，可输入一部分然后按 Tab 键补全
 ```
-输入密码后回车，然后执行 exit。  
+输入密码后回车，然后执行 exit。
 注意：要连接名称里带空格的网络，连接时要用双引号将网络名称括起来。
 ## 测试网络是否正常连接
 执行
@@ -22,11 +22,11 @@ ping archlinux.org -c 3
 ```bash
 timedatectl set-ntp true
 ```
-即可同步。  
+即可同步。
 可以使用 timedatectl status 检查服务状态。
 ## 建立与格式化硬盘分区（使用 Btrfs 文件系统）
-执行 lsblk 查看硬盘详情。
-![1](./img/lsblk.png)
+执行 lsblk 查看硬盘详情。<br>
+![1](./img/lsblk.png) <br>
 图中所示是我的硬盘，最左边 nvme0n1 是硬盘设备名，下面的 nvme0n1p1、nvme0n1p2...是分区设备名。
 ### 注意：硬盘命名规则
 
@@ -59,8 +59,8 @@ Size in sectors or {KMGTP}，输入根分区的大小（建议大于 64G），�
 Hex code or GUID，默认8300是 Linux File System，保持默认即可，回车。
 Enter new partition name，输入分区名，回车。
 ### 2.格式化硬盘分区
-分区完成后，可执行 ```lsblk``` 查看分区状态。  
-![3](./img/lsblk.png)  
+分区完成后，可执行 ```lsblk``` 查看分区状态。
+![3](./img/lsblk.png)
 找到 EFI 分区（一般在最前面，大小 100M ~ 300M）
 执行下面命令格式化 EFI 分区：
 
@@ -75,12 +75,12 @@ mkfs.btrfs -f /dev/根分区设备名 #图中根分区设备名为nvme0n1p2，�
 ```
 ### 3.挂载分区
 **挂载分区的顺序不要颠倒，否则可能遇到安装完成后无法启动系统的问题。**
-创建Btrfs子卷  
+创建Btrfs子卷
 为了创建子卷，需要先将上面的 Btrfs 分区挂载到 /mnt 下：
 ```bash
 mount -t btrfs -o compress=zstd /dev/sda3 /mnt
 ```
-命令参数说明：  
+命令参数说明：
 - -t 指定挂载分区文件系统类型
 - -o 添加挂载参数
 - compress=zstd 为开启透明压缩
@@ -99,16 +99,16 @@ btrfs subvolume list -p /mnt
 ```bash
 umount /mnt
 ```
-挂载 Btrfs 子卷  
+挂载 Btrfs 子卷
 注意，挂载是有顺序的，需要从根目录开始挂载。使用如下命令挂载子卷：
 ```bash
 # 挂载 / 目录
 mount -t btrfs -o subvol=/@,compress=zstd /dev/sda2 /mnt
 # 创建&挂载 /boot/efi 目录
-mkdir -p /mnt/efi
-mount /dev/sda1 /mnt/efi
+mkdir -p /mnt/boot/efi
+mount /dev/sda1 /mnt/boot/efi
 ```
-检查挂载状态  
+检查挂载状态
 完成后可以使用以下命令查看挂载状态：
 ```bash
 df -h
@@ -117,7 +117,7 @@ df -h
 ```bash
 Filesystem Mounted on
 /dev/sda2  /
-/dev/sda1  /efi
+/dev/sda1  /boot/efi
 ```
 ## 修改镜像源
 执行：
@@ -170,7 +170,7 @@ rw,relatime,nodiscard,compress=zstd:3,ssd,space_cache=v2,subvol=/@
 arch-chroot /mnt
 ```
 ## 配置软件仓库
-修改```/etc/pacman.conf```： 
+修改```/etc/pacman.conf```：
 ```bash
 sudo nano /etc/pacman.conf
 ```
@@ -235,8 +235,8 @@ passwd 用户名
 EDITOR=nano visudo
 ```
 往下翻找到 "Uncomment to allow members of group to execute any command"
-将下面一行 %wheel 前的注释符（#）删去。  
-![3](./img/visudo.png)  
+将下面一行 %wheel 前的注释符（#）删去。
+![3](./img/visudo.png)
 按 CTRL+X，保存退出。
 ## 安装 GRUB 引导程序
 执行 ```lsblk``` 确保 ```/boot/efi``` 分区已正确挂载。
@@ -245,12 +245,12 @@ EDITOR=nano visudo
 ```bash
 pacman -S grub efibootmgr os-prober
 ```
-如果是双系统，需要启用 os-prober 发现其他操作系统（比如 Windows）。  
+如果是双系统，需要启用 os-prober 发现其他操作系统（比如 Windows）。
 编辑grub文件
 ```bash
 nano /etc/default/grub
 ```
-![4](./img/os-prober.avif)  
+![4](./img/os-prober.avif)
 将 GRUB 安装到 EFI 分区：
 ```bash
 grub-install --efi-directory=/boot/efi --bootloader-id=Arch
@@ -279,7 +279,7 @@ systemctl enable dhcpcd@eno2
 ```
 执行下面命令安装蓝牙、声卡驱动和其他工具：
 ```bash
-pacman -S bluez bluez-utils pipewire-pulse pipewire-jack pipewire-alsa ntfs-3g paru
+pacman -S bluez bluez-utils pipewire-pulse pipewire-alsa paru
 ```
 - 此处使用了新一代声音服务器 PipeWire，延迟比 PulseAudio 更低。有关 PipeWire 的其他信息，请参阅 https://wiki.archlinux.org/title/PipeWire 。
 如果电脑有蓝牙功能，执行下面命令启用蓝牙：
@@ -305,7 +305,8 @@ pacman -S libva-intel-driver
 ```
 ## 安装gnome桌面
 ```bash
-pacman -S gnome gnome-tweaks gdm
+pacman -S gnome gdm gnome-tweaks
+paru -S extension-manager
 ```
 开机自启```gdm``界面:
 ```bash
@@ -328,4 +329,4 @@ umount -R /mnt
 ```bash
 poweroff
 ```
-拔掉安装 U 盘，开机。
+拔掉安装U盘，开机。
