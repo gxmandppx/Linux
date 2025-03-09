@@ -172,7 +172,7 @@ arch-chroot /mnt
 ## 配置软件仓库
 修改```/etc/pacman.conf```：
 ```bash
-sudo nano /etc/pacman.conf
+nano /etc/pacman.conf
 ```
 添加archlinuxcn(中科大)
 ```bash
@@ -279,7 +279,7 @@ systemctl enable dhcpcd@eno2
 ```
 执行下面命令安装蓝牙、声卡驱动和其他工具：
 ```bash
-pacman -S bluez bluez-utils pipewire-pulse pipewire-alsa paru
+pacman -S bluez bluez-utils pipewire-pulse pipewire-alsa pipewire-jack paru
 ```
 - 此处使用了新一代声音服务器 PipeWire，延迟比 PulseAudio 更低。有关 PipeWire 的其他信息，请参阅 https://wiki.archlinux.org/title/PipeWire 。
 如果电脑有蓝牙功能，执行下面命令启用蓝牙：
@@ -290,31 +290,16 @@ systemctl enable bluetooth
 ### Intel 核显
 执行下面命令安装 Intel 核显驱动：
 ```bash
-pacman -S mesa vulkan-intel
+pacman -S mesa vulkan-intel intel-media-driver
 ```
-注意，只有 Ivy Bridge 及更新架构的 CPU 核显才支持 vulkan。
-#### Intel QuickSync Video 驱动
-Broadwell 及更新架构：
-```bash
-pacman -S intel-media-driver
-pacman -S intel-media-sdk
-```
-Haswell 及更早架构：
-```bash
-pacman -S libva-intel-driver
-```
+注意，只有第三代及以上 CPU 核显才支持 vulkan。
 ## 安装gnome桌面
 ```bash
-pacman -S gnome gdm gnome-tweaks
-paru -S extension-manager
+pacman -S gnome-shell gdm gnome-control-center gnome-settings-daemon gnome-console nautilus gnome-keyring gnome-disk-utility gnome-system-monitor gvfs gvfs-dnssd gnome-backgrounds loupe gnome-text-editor decibels gnome-tweaks ibus ibus-libpinyin
 ```
 开机自启```gdm``界面:
 ```bash
 systemctl enable gdm
-```
-## 安装ibus输入法
-```bash
-pacman -S ibus ibus-libpinyin
 ```
 ## 安装完成，重启进入 Arch Linux
 执行下面命令退出 Chroot：
@@ -330,3 +315,7 @@ umount -R /mnt
 poweroff
 ```
 拔掉安装U盘，开机。
+## gnome拓展管理器
+```bash
+paru -S extension-manager
+```
