@@ -290,16 +290,20 @@ systemctl enable bluetooth
 ### Intel 核显
 执行下面命令安装 Intel 核显驱动：
 ```bash
-pacman -S mesa vulkan-intel intel-media-driver
+pacman -S mesa intel-media-driver
 ```
 注意，只有第三代及以上 CPU 核显才支持 vulkan。
 ## 安装gnome桌面
 ```bash
-pacman -S gnome-shell gdm gnome-control-center gnome-settings-daemon gnome-console nautilus gnome-keyring gnome-disk-utility gnome-system-monitor gvfs gvfs-dnssd gnome-backgrounds loupe gnome-text-editor decibels gnome-tweaks ibus ibus-libpinyin
+pacman -S gnome-shell gdm gnome-control-center gnome-settings-daemon gnome-console nautilus gnome-keyring gnome-disk-utility gnome-system-monitor gvfs gvfs-dnssd gnome-backgrounds loupe gnome-text-editor decibels gnome-tweaks  gnome-font-viewer ibus ibus-libpinyin
 ```
-开机自启```gdm``界面:
+## 开机自启```gdm``界面:
 ```bash
 systemctl enable gdm
+```
+## 安装常用软件
+```bash
+pacman -S firefox mpv noto-fonts-emoji
 ```
 ## 安装完成，重启进入 Arch Linux
 执行下面命令退出 Chroot：
