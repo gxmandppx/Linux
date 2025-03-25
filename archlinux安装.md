@@ -93,7 +93,7 @@ btrfs subvolume create /mnt/@       # 创建 /     目录子卷
 ```bash
 btrfs subvolume list -p /mnt
 ```
-如果显示两条尾部分别是：path @ 和 path @home 即为正常。
+如果显示尾部是：path @ 即为正常。
 
 最后将 /mnt 卸载掉：
 ```bash
@@ -104,9 +104,9 @@ umount /mnt
 ```bash
 # 挂载 / 目录
 mount -t btrfs -o subvol=/@,compress=zstd /dev/sda2 /mnt
-# 创建&挂载 /boot/efi 目录
-mkdir -p /mnt/boot/efi
-mount /dev/sda1 /mnt/boot/efi
+# 创建&挂载 /boot 目录
+mkdir -p /mnt/boot
+mount /dev/sda1 /mnt/boot
 ```
 检查挂载状态
 完成后可以使用以下命令查看挂载状态：
@@ -116,8 +116,8 @@ df -h
 其中 df -h 应该会显示如下内容：
 ```bash
 Filesystem Mounted on
-/dev/sda2  /
-/dev/sda1  /boot/efi
+/dev/sda2  /mnt
+/dev/sda1  /mnt/boot
 ```
 ## 修改镜像源
 执行：
@@ -144,23 +144,6 @@ pacstrap /mnt base base-devel linux linux-firmware linux-headers nano intel-ucod
 
 ```bash
 genfstab -U /mnt >> /mnt/etc/fstab
-```
-
-然后执行下面命令编辑 fstab 文件：
-```bash
-nano /mnt/etc/fstab
-```
-
-按键盘上的 i 进入插入模式。
-
-找到文件系统为 btrfs 的一行或两行，删除挂载参数中的 ```subvolid=xxx```，添加 ```nodiscard``` 参数（防止与 ```fstrim.timer``` 冲突），**注意前后的逗号**。
-
-然后按 Esc 键，输入 :wq，回车，保存退出。
-
-下面是根分区 /@ 子卷的挂载参数示例。
-
-```
-rw,relatime,nodiscard,compress=zstd:3,ssd,space_cache=v2,subvol=/@
 ```
 ## Chroot 进入新系统
 
@@ -238,32 +221,67 @@ EDITOR=nano visudo
 将下面一行 %wheel 前的注释符（#）删去。
 ![3](./img/visudo.png)
 按 CTRL+X，保存退出。
-## 安装 GRUB 引导程序
-执行 ```lsblk``` 确保 ```/boot/efi``` 分区已正确挂载。
-然后执行下面命令安装 grub 和 efibootmgr：
+## 安装并配置 systemd-boot
 
+执行 `lsblk` 确保 `/boot` 分区已正确挂载。
+### 安装 systemd-boot
 ```bash
-pacman -S grub efibootmgr os-prober
+bootctl install
 ```
-如果是双系统，需要启用 os-prober 发现其他操作系统（比如 Windows）。
-编辑grub文件
+### 配置引导加载项
+
+编辑 /boot/loader/loader.conf：
 ```bash
-nano /etc/default/grub
+default arch.conf
+timeout 0         # 0表示直接启动
+editor no
 ```
-![4](./img/os-prober.avif)
-将 GRUB 安装到 EFI 分区：
+### 创建 /boot/loader/entries/arch.conf：
 ```bash
-grub-install --efi-directory=/boot/efi --bootloader-id=Arch
+title   Arch Linux
+linux   /vmlinuz-linux
+initrd /intel-ucode.img    # 如果安装的是AMD CPU，替换为/amd-ucode.img
+initrd  /initramfs-linux.img
+options root=UUID=<根分区UUID> rw rootflags=subvol=@,compress=zstd
 ```
-使用以下命令生成 GRUB 配置文件：
+- 使用 blkid /dev/sda2 获取根分区的 UUID。
+### 双系统配置（可选）
+若需引导Windows：
+1.**手动添加Windows引导条目：**
 ```bash
-grub-mkconfig -o /boot/grub/grub.cfg
+nano /boot/loader/entries/windows.conf
 ```
-## SSD TRIM
-执行下面命令开启 SSD 的 TRIM 功能：
+内容示例：
 ```bash
-systemctl enable fstrim.timer
+title Windows
+path /EFI/Microsoft/Boot/bootmgfw.efi
 ```
+## 配置 zram
+
+1. **安装 zram 工具**
+   ```bash
+   pacman -S zram-generator
+   ```
+
+2. **创建 zram 配置文件**
+   - 创建 `/etc/systemd/zram-generator.conf` 文件并添加以下内容：
+     ```
+     [zram0]
+     zram-size = ram / 2
+     compression-algorithm = zstd
+     ```
+     - `zram-size = ram / 2` 表示 zram 大小为物理内存的一半，可根据需要调整。
+     - `compression-algorithm = zstd` 使用 zstd 压缩算法。
+
+3. **启用 zram 服务**
+   - zram-generator 会自动生成 systemd 单元文件，开机后自动加载。
+
+4. **验证 zram 配置（可选）**
+   - 重启后，检查 zram 是否生效：
+     ```bash
+     lsblk
+     zramctl
+     ```
 ## 网络、蓝牙与声音
 执行下面命令安装网络相关工具：
 ```bash
@@ -297,7 +315,7 @@ pacman -S mesa intel-media-driver
 ```bash
 pacman -S gnome-shell gdm gnome-control-center gnome-settings-daemon gnome-console nautilus gnome-keyring gnome-disk-utility gnome-system-monitor gvfs gvfs-dnssd gnome-backgrounds loupe gnome-text-editor decibels gnome-tweaks  gnome-font-viewer ibus ibus-libpinyin
 ```
-## 开机自启```gdm``界面:
+## 开机自启```gdm```界面:
 ```bash
 systemctl enable gdm
 ```
