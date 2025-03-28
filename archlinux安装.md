@@ -1,4 +1,5 @@
 ## 连接网络
+
 ### 有线网络
 插上网线，等待片刻即可。
 ### 无线网络
@@ -17,6 +18,7 @@ station wlan0 connect SSID #SSID 即为 Wi-Fi 名称，可输入一部分然后�
 ping archlinux.org -c 3
 ```
 即可测试与 Arch Linux 服务器是否正常连接。（-c 后面的数字表示连接的次数）
+
 ## 与互联网同步日期时间
 执行
 ```bash
@@ -58,6 +60,7 @@ First sector，保持默认即可，回车。
 Size in sectors or {KMGTP}，输入根分区的大小（建议大于 64G），以**数字+G**（如80G）的形式输入，回车。
 Hex code or GUID，默认8300是 Linux File System，保持默认即可，回车。
 Enter new partition name，输入分区名，回车。
+
 ### 2.格式化硬盘分区
 分区完成后，可执行 ```lsblk``` 查看分区状态。
 ![3](./img/lsblk.png)
@@ -73,6 +76,7 @@ mkfs.fat -F 32 /dev/EFI分区设备名 #图中EFI分区设备名为nvme0n1p1，�
 ```bash
 mkfs.btrfs -f /dev/根分区设备名 #图中根分区设备名为nvme0n1p2，请根据自己lsblk的实际情况替换
 ```
+
 ### 3.挂载分区
 **挂载分区的顺序不要颠倒，否则可能遇到安装完成后无法启动系统的问题。**
 创建Btrfs子卷
@@ -104,9 +108,10 @@ umount /mnt
 ```bash
 # 挂载 / 目录
 mount -t btrfs -o subvol=/@,compress=zstd /dev/sda2 /mnt
-# 创建&挂载 /boot 目录
-mkdir -p /mnt/boot
-mount /dev/sda1 /mnt/boot
+
+# 创建&挂载 /boot/efi 目录
+mkdir -p /mnt/boot/efi
+mount /dev/sda1 /mnt/boot/efi
 ```
 检查挂载状态
 完成后可以使用以下命令查看挂载状态：
@@ -117,8 +122,9 @@ df -h
 ```bash
 Filesystem Mounted on
 /dev/sda2  /mnt
-/dev/sda1  /mnt/boot
+/dev/sda1  /mnt/boot/efi
 ```
+
 ## 修改镜像源
 执行：
 ```bash
@@ -129,11 +135,13 @@ nano /etc/pacman.d/mirrorlist
 Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch
 ```
 然后按ctrl+x保存并退出。
+
 ## 安装系统
 执行如下命令开始安装系统：
 ```bash
 pacstrap /mnt base base-devel linux linux-firmware linux-headers nano intel-ucode
 ```
+
 ### 备注
 - base-devel：基础开发工具包（包括 gcc g++ make 等等）
 - nano：常用的文本编辑器
@@ -145,6 +153,7 @@ pacstrap /mnt base base-devel linux linux-firmware linux-headers nano intel-ucod
 ```bash
 genfstab -U /mnt >> /mnt/etc/fstab
 ```
+
 ## Chroot 进入新系统
 
 执行以下命令变更根目录，进入新系统：
@@ -152,6 +161,7 @@ genfstab -U /mnt >> /mnt/etc/fstab
 ```bash
 arch-chroot /mnt
 ```
+
 ## 配置软件仓库
 修改```/etc/pacman.conf```：
 ```bash
@@ -166,6 +176,7 @@ Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
 ```bash
 pacman -Syu archlinuxcn-keyring
 ```
+
 ## 设置时区
 
 执行下面命令设置 Asia/Shanghai 时区：
@@ -197,12 +208,14 @@ nano /etc/locale.gen
 locale-gen
 ```
 生成 locale 信息。
+
 ## Root 用户密码设置(可选)
 执行下面命令设置 Root 用户密码：
 ```bash
 passwd
 ```
 （输入密码时不会有任何显示）
+
 ## 普通用户的创建与设置
 执行下面命令创建一个普通用户：
 
@@ -221,13 +234,38 @@ EDITOR=nano visudo
 将下面一行 %wheel 前的注释符（#）删去。
 ![3](./img/visudo.png)
 按 CTRL+X，保存退出。
-## 安装并配置 systemd-boot
+
+## 安装 GRUB 引导程序
+执行 ```lsblk``` 确保 ```/boot/efi``` 分区已正确挂载。
+然后执行下面命令安装 grub 和 efibootmgr：
+```bash
+pacman -S grub efibootmgr
+```
+
+### 如果是双系统，需要启用 os-prober 发现其他操作系统（比如 Windows）。
+编辑grub文件：
+```bash
+nano /etc/default/grub
+```
+![4](./img/os-prober.avif)
+将 GRUB 安装到 EFI 分区：
+```bash
+grub-install --efi-directory=/boot/efi --bootloader-id=Arch
+```
+使用以下命令生成 GRUB 配置文件：
+```bash
+grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+## 安装并配置 systemd-boot（可选）
 
 执行 `lsblk` 确保 `/boot` 分区已正确挂载。
+
 ### 安装 systemd-boot
 ```bash
 bootctl install
 ```
+
 ### 配置引导加载项
 
 编辑 /boot/loader/loader.conf：
@@ -236,6 +274,7 @@ default arch.conf
 timeout 0         # 0表示直接启动
 editor no
 ```
+
 ### 创建 /boot/loader/entries/arch.conf：
 ```bash
 title   Arch Linux
@@ -245,6 +284,7 @@ initrd  /initramfs-linux.img
 options root=UUID=<根分区UUID> rw rootflags=subvol=@,compress=zstd
 ```
 - 使用 blkid /dev/sda2 获取根分区的 UUID。
+
 ### 双系统配置（可选）
 若需引导Windows：
 1.**手动添加Windows引导条目：**
@@ -256,6 +296,7 @@ nano /boot/loader/entries/windows.conf
 title Windows
 path /EFI/Microsoft/Boot/bootmgfw.efi
 ```
+
 ## 配置 zram
 
 1. **安装 zram 工具**
@@ -282,6 +323,7 @@ path /EFI/Microsoft/Boot/bootmgfw.efi
      lsblk
      zramctl
      ```
+
 ## 网络、蓝牙与声音
 执行下面命令安装网络相关工具：
 ```bash
@@ -304,25 +346,31 @@ pacman -S bluez bluez-utils pipewire-pulse pipewire-alsa pipewire-jack paru
 ```bash
 systemctl enable bluetooth
 ```
+
 ## 显卡驱动
+
 ### Intel 核显
 执行下面命令安装 Intel 核显驱动：
 ```bash
 pacman -S mesa intel-media-driver
 ```
 注意，只有第三代及以上 CPU 核显才支持 vulkan。
+
 ## 安装gnome桌面
 ```bash
 pacman -S gnome-shell gdm gnome-control-center gnome-settings-daemon gnome-console nautilus gnome-keyring gnome-disk-utility gnome-system-monitor gvfs gvfs-dnssd gnome-backgrounds loupe gnome-text-editor decibels gnome-tweaks  gnome-font-viewer ibus ibus-libpinyin
 ```
+
 ## 开机自启```gdm```界面:
 ```bash
 systemctl enable gdm
 ```
+
 ## 安装常用软件
 ```bash
 pacman -S firefox mpv noto-fonts-emoji
 ```
+
 ## 安装完成，重启进入 Arch Linux
 执行下面命令退出 Chroot：
 ```bash
@@ -337,6 +385,7 @@ umount -R /mnt
 poweroff
 ```
 拔掉安装U盘，开机。
+
 ## gnome拓展管理器
 ```bash
 paru -S extension-manager
