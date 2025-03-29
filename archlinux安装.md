@@ -297,33 +297,6 @@ title Windows
 path /EFI/Microsoft/Boot/bootmgfw.efi
 ```
 
-## 配置 zram
-
-1. **安装 zram 工具**
-   ```bash
-   pacman -S zram-generator
-   ```
-
-2. **创建 zram 配置文件**
-   - 创建 `/etc/systemd/zram-generator.conf` 文件并添加以下内容：
-     ```
-     [zram0]
-     zram-size = ram / 2
-     compression-algorithm = zstd
-     ```
-     - `zram-size = ram / 2` 表示 zram 大小为物理内存的一半，可根据需要调整。
-     - `compression-algorithm = zstd` 使用 zstd 压缩算法。
-
-3. **启用 zram 服务**
-   - zram-generator 会自动生成 systemd 单元文件，开机后自动加载。
-
-4. **验证 zram 配置（可选）**
-   - 重启后，检查 zram 是否生效：
-     ```bash
-     lsblk
-     zramctl
-     ```
-
 ## 网络、蓝牙与声音
 执行下面命令安装网络相关工具：
 ```bash
