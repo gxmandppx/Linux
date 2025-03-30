@@ -19,6 +19,35 @@ ping archlinux.org -c 3
 ```
 即可测试与 Arch Linux 服务器是否正常连接。（-c 后面的数字表示连接的次数）
 
+## 配置ssh（可选）
+1. 设置root密码
+```bash
+passwd               # 设置root密码（后续SSH登录需用）
+```
+2. 配置远程连接
+- 修改配置文件允许root登录：
+```bash
+nano /etc/ssh/sshd_config
+```
+- 取消注释或添加以下行：
+```nash
+PermitRootLogin yes
+```
+- 重启SSH服务：
+```bash
+systemctl start sshd
+```
+- 获取本机IP
+```bash
+ip a
+```
+3. 通过SSH远程连接  
+在另一台电脑使用SSH客户端（如PuTTY、MobaXterm）连接：
+```bash
+ssh root@<IP地址>  # 输入root密码登录
+```
+***注意：若连接失败，检查防火墙或网络配置***
+
 ## 与互联网同步日期时间
 执行
 ```bash
